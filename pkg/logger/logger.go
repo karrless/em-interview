@@ -15,6 +15,7 @@ const LoggerKey KeyString = "logger"
 type Logger interface {
 	Debug(msg string, fields ...zap.Field)
 	Info(msg string, fields ...zap.Field)
+	Fatal(msg string, fields ...zap.Field)
 }
 
 // logger
@@ -32,9 +33,22 @@ func (l *logger) Info(msg string, fields ...zap.Field) {
 	l.logger.Info(msg, fields...)
 }
 
+func (l *logger) Fatal(msg string, fields ...zap.Field) {
+	l.logger.Fatal(msg, fields...)
+}
+
 // Create new logger
-func New() Logger {
-	zapLogger, _ := zap.NewProduction()
+func New(debug bool) Logger {
+	var zapLogger *zap.Logger
+	var err error
+	if debug {
+		zapLogger, err = zap.NewDevelopment()
+	} else {
+		zapLogger, err = zap.NewProduction()
+	}
+	if err != nil {
+		panic(err)
+	}
 	defer zapLogger.Sync()
 
 	return &logger{logger: zapLogger}
