@@ -17,7 +17,7 @@ func main() {
 	ctx = context.WithValue(ctx, logger.LoggerKey, mainLogger)
 	mainLogger.Info("Starting application")
 
-	cfg := config.New()
+	cfg := config.New("")
 	if cfg == nil {
 		mainLogger.Fatal("Failed to read config")
 	}

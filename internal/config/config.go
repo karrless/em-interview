@@ -1,4 +1,3 @@
-// Tools for work with configuration
 package config
 
 import (
@@ -10,9 +9,12 @@ type Config struct {
 	postgres.PostgresConfig
 }
 
-func New() *Config {
+func New(path string) *Config {
 	cfg := Config{}
-	err := cleanenv.ReadConfig("./.env", &cfg)
+	if path == "" {
+		path = "./.env"
+	}
+	err := cleanenv.ReadConfig(path, &cfg)
 	if err != nil {
 		return nil
 	}
