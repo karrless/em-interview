@@ -4,6 +4,8 @@ import (
 	"context"
 
 	"github.com/karrless/em-interview/internal/config"
+	"github.com/karrless/em-interview/internal/repository"
+	"github.com/karrless/em-interview/internal/service"
 	"github.com/karrless/em-interview/pkg/db/migrations"
 	"github.com/karrless/em-interview/pkg/db/postgres"
 	"github.com/karrless/em-interview/pkg/logger"
@@ -37,4 +39,8 @@ func main() {
 		mainLogger.Debug("No new migrations")
 	}
 	mainLogger.Debug("Migrations applied", zap.Int("Migrate version", migrationsVersion))
+
+	externalAPIRepo := repository.NewExtarnalAPIRepository(&cfg.ExternalAPIConfig)
+	songsRepo := repository.NewSongRepository(db)
+	_ = service.NewSongsService(songsRepo, externalAPIRepo)
 }
