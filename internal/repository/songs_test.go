@@ -1,4 +1,4 @@
-package repository
+package repository_test
 
 import (
 	"context"
@@ -6,6 +6,7 @@ import (
 
 	"github.com/karrless/em-interview/internal/config"
 	"github.com/karrless/em-interview/internal/models"
+	"github.com/karrless/em-interview/internal/repository"
 	"github.com/karrless/em-interview/pkg/db/postgres"
 )
 
@@ -16,7 +17,7 @@ func TestCreateSong(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	repo := NewSongRepository(db)
+	repo := repository.NewSongRepository(db)
 	resultID, err := repo.CreateSong(&models.Song{
 		Group:       "group",
 		Title:       "title",
@@ -37,7 +38,7 @@ func TestGetSong(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	repo := NewSongRepository(db)
+	repo := repository.NewSongRepository(db)
 	song, err := repo.GetSong(3)
 	if err != nil {
 		t.Fatal(err)
@@ -57,7 +58,7 @@ func TestUpdateSong(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	repo := NewSongRepository(db)
+	repo := repository.NewSongRepository(db)
 	err = repo.UpdateSong(&models.Song{
 		ID:          2,
 		Group:       "test",
@@ -86,7 +87,7 @@ func TestDeleteSong(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	repo := NewSongRepository(db)
+	repo := repository.NewSongRepository(db)
 	err = repo.DeleteSong(3)
 	if err != nil {
 		t.Fatal(err)
@@ -106,7 +107,7 @@ func TestGetSongs(t *testing.T) {
 		t.Fatal(err)
 	}
 	filter := models.SongsFilter{}
-	repo := NewSongRepository(db)
+	repo := repository.NewSongRepository(db)
 	songs, err := repo.GetSongs(&filter)
 	if err != nil {
 		t.Fatal(err)
