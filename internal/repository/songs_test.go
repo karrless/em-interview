@@ -18,9 +18,9 @@ func TestCreateSong(t *testing.T) {
 		t.Fatal(err)
 	}
 	repo := repository.NewSongRepository(db)
-	resultID, err := repo.CreateSong(&models.Song{
-		Group:       "group",
-		Title:       "title",
+	result, err := repo.CreateSong(&models.Song{
+		Group:       "testest",
+		Title:       "test",
 		ReleaseDate: "28.12.2003",
 		Text:        "text",
 		Link:        "link",
@@ -28,7 +28,7 @@ func TestCreateSong(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	t.Log(resultID)
+	t.Log(result)
 }
 
 func TestGetSong(t *testing.T) {
@@ -39,7 +39,7 @@ func TestGetSong(t *testing.T) {
 		t.Fatal(err)
 	}
 	repo := repository.NewSongRepository(db)
-	song, err := repo.GetSong(3)
+	song, err := repo.GetSong(4)
 	if err != nil {
 		t.Fatal(err)
 	}

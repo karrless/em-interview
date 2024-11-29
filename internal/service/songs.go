@@ -3,7 +3,7 @@ package service
 import "github.com/karrless/em-interview/internal/models"
 
 type SongsRepository interface {
-	CreateSong(song *models.Song) (int64, error)
+	CreateSong(song *models.Song) (*models.Song, error)
 	GetSong(id int64) (*models.Song, error)
 	DeleteSong(id int64) error
 	UpdateSong(song *models.Song) error
@@ -24,9 +24,9 @@ func NewSongsService(songsRepo SongsRepository, externalAPIRepo ExternalAPIRepos
 	return &SongsService{songsRepo: songsRepo, externalAPIRepo: externalAPIRepo}
 }
 
-func (s *SongsService) CreateSong(song *models.Song) (int64, error) {
+func (s *SongsService) CreateSong(song *models.Song) (*models.Song, error) {
 	if err := s.externalAPIRepo.UpdateSongInfo(song); err != nil {
-		return 0, err
+		return nil, err
 	}
 	return s.songsRepo.CreateSong(song)
 }
