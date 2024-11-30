@@ -7,8 +7,10 @@ import (
 	"github.com/karrless/em-interview/internal/service"
 	"github.com/karrless/em-interview/internal/transport/rest/middlewares"
 	"github.com/karrless/em-interview/internal/transport/rest/routes"
+	"github.com/karrless/em-interview/pkg/logger"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
+	"go.uber.org/zap"
 
 	"github.com/karrless/em-interview/docs"
 )
@@ -23,10 +25,12 @@ type Server struct {
 	config ServerConfig
 }
 
-func New(ctx *context.Context, cfg ServerConfig, SongsService *service.SongsService) *Server {
+func New(ctx *context.Context, cfg ServerConfig, SongsService *service.SongsService, debug bool) *Server {
+	if !debug {
+		gin.SetMode(gin.ReleaseMode)
+	}
 	r := gin.New()
 	r.Use(middlewares.WithLogger(ctx), gin.Recovery())
-
 	r.SetTrustedProxies([]string{"127.0.0.1", cfg.Host})
 	docs.SwaggerInfo.BasePath = "/api/v1"
 	docs.SwaggerInfo.Host = cfg.Host + ":" + cfg.Port
@@ -44,6 +48,7 @@ func New(ctx *context.Context, cfg ServerConfig, SongsService *service.SongsServ
 	return &Server{r: r, config: cfg}
 }
 
-func (s *Server) Run() error {
+func (s *Server) Run(ctx *context.Context) error {
+	logger.GetLoggerFromCtx(*ctx).Info("Server started", zap.String("host", s.config.Host), zap.String("port", s.config.Port))
 	return s.r.Run(s.config.Host + ":" + s.config.Port)
 }

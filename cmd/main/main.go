@@ -19,7 +19,7 @@ import (
 func main() {
 	ctx := context.Background()
 
-	mainLogger := logger.New(true)
+	mainLogger := logger.New(false)
 	ctx = context.WithValue(ctx, logger.LoggerKey, mainLogger)
 	mainLogger.Info("Starting application")
 
@@ -49,13 +49,13 @@ func main() {
 
 	songsService := service.NewSongsService(songsRepo, externalAPIRepo)
 
-	server := rest.New(&ctx, cfg.ServerConfig, songsService)
+	server := rest.New(&ctx, cfg.ServerConfig, songsService, false)
 
 	graceChannel := make(chan os.Signal, 1)
 	signal.Notify(graceChannel, syscall.SIGINT, syscall.SIGTERM)
 
 	go func() {
-		if err := server.Run(); err != nil {
+		if err := server.Run(&ctx); err != nil {
 			mainLogger.Fatal("failed to start server", zap.Error(err))
 		}
 	}()

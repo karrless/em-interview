@@ -3,9 +3,29 @@ definitions:
     properties:
       group:
         description: Название группы
+        example: group_name
         type: string
       song:
         description: Название песни
+        example: song_name
+        type: string
+    type: object
+  controllers.UpdateSongRequest:
+    properties:
+      group:
+        example: group_name
+        type: string
+      link:
+        example: link
+        type: string
+      releaseDate:
+        example: 21.12.2003
+        type: string
+      song:
+        example: song_name
+        type: string
+      text:
+        example: text
         type: string
     type: object
   models.Song:
@@ -43,6 +63,7 @@ paths:
       parameters:
       - collectionFormat: multi
         description: Song group
+        example: group1, group2
         in: query
         items:
           type: string
@@ -50,31 +71,37 @@ paths:
         type: array
       - collectionFormat: multi
         description: Song title
+        example: song1, song2
         in: query
         items:
           type: string
         name: title
         type: array
-      - collectionFormat: csv
+      - collectionFormat: multi
         description: Song release date
+        example: 31.12.2006, 02.01.2006
         in: query
         items:
           type: string
         name: release_date
         type: array
       - description: Song release date before
+        example: 31.12.2006
         in: query
         name: before
         type: string
       - description: Song release date after
+        example: 31.12.2006
         in: query
         name: after
         type: string
       - description: Offset
+        example: 10
         in: query
         name: offset
         type: integer
       - description: Limit
+        example: 10
         in: query
         name: limit
         type: integer
@@ -120,6 +147,7 @@ paths:
     delete:
       parameters:
       - description: Song ID
+        example: 1
         in: path
         name: id
         required: true
@@ -139,6 +167,7 @@ paths:
     get:
       parameters:
       - description: Song ID
+        example: 1
         in: path
         name: id
         required: true
@@ -163,6 +192,7 @@ paths:
     put:
       parameters:
       - description: Song ID
+        example: 1
         in: path
         name: id
         required: true
@@ -172,7 +202,7 @@ paths:
         name: song
         required: true
         schema:
-          $ref: '#/definitions/models.Song'
+          $ref: '#/definitions/controllers.UpdateSongRequest'
       produces:
       - application/json
       responses:

@@ -47,6 +47,7 @@ const docTemplate = `{
                             "type": "string"
                         },
                         "collectionFormat": "multi",
+                        "example": "group1, group2",
                         "description": "Song group",
                         "name": "group",
                         "in": "query"
@@ -57,6 +58,7 @@ const docTemplate = `{
                             "type": "string"
                         },
                         "collectionFormat": "multi",
+                        "example": "song1, song2",
                         "description": "Song title",
                         "name": "title",
                         "in": "query"
@@ -66,31 +68,36 @@ const docTemplate = `{
                         "items": {
                             "type": "string"
                         },
-                        "collectionFormat": "csv",
+                        "collectionFormat": "multi",
+                        "example": "31.12.2006, 02.01.2006",
                         "description": "Song release date",
                         "name": "release_date",
                         "in": "query"
                     },
                     {
                         "type": "string",
+                        "example": "31.12.2006",
                         "description": "Song release date before",
                         "name": "before",
                         "in": "query"
                     },
                     {
                         "type": "string",
+                        "example": "31.12.2006",
                         "description": "Song release date after",
                         "name": "after",
                         "in": "query"
                     },
                     {
                         "type": "integer",
+                        "example": 10,
                         "description": "Offset",
                         "name": "offset",
                         "in": "query"
                     },
                     {
                         "type": "integer",
+                        "example": 10,
                         "description": "Limit",
                         "name": "limit",
                         "in": "query"
@@ -159,6 +166,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "integer",
+                        "example": 1,
                         "description": "Song ID",
                         "name": "id",
                         "in": "path",
@@ -194,6 +202,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "integer",
+                        "example": 1,
                         "description": "Song ID",
                         "name": "id",
                         "in": "path",
@@ -205,7 +214,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.Song"
+                            "$ref": "#/definitions/controllers.UpdateSongRequest"
                         }
                     }
                 ],
@@ -231,6 +240,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "integer",
+                        "example": 1,
                         "description": "Song ID",
                         "name": "id",
                         "in": "path",
@@ -259,11 +269,38 @@ const docTemplate = `{
             "properties": {
                 "group": {
                     "description": "Название группы",
-                    "type": "string"
+                    "type": "string",
+                    "example": "group_name"
                 },
                 "song": {
                     "description": "Название песни",
-                    "type": "string"
+                    "type": "string",
+                    "example": "song_name"
+                }
+            }
+        },
+        "controllers.UpdateSongRequest": {
+            "type": "object",
+            "properties": {
+                "group": {
+                    "type": "string",
+                    "example": "group_name"
+                },
+                "link": {
+                    "type": "string",
+                    "example": "link"
+                },
+                "releaseDate": {
+                    "type": "string",
+                    "example": "21.12.2003"
+                },
+                "song": {
+                    "type": "string",
+                    "example": "song_name"
+                },
+                "text": {
+                    "type": "string",
+                    "example": "text"
                 }
             }
         },
