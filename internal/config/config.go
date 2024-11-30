@@ -11,6 +11,7 @@ type Config struct {
 	postgres.PostgresConfig
 	repository.ExternalAPIConfig
 	rest.ServerConfig
+	Debug bool `env:"DEBUG" env-default:"true"`
 }
 
 func New(path string) *Config {

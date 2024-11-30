@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"log"
 	"os"
 	"os/signal"
 	"syscall"
@@ -19,14 +20,15 @@ import (
 func main() {
 	ctx := context.Background()
 
-	mainLogger := logger.New(true)
+	cfg := config.New("")
+	if cfg == nil {
+		log.Fatal("Failed to read config")
+	}
+
+	mainLogger := logger.New(cfg.Debug)
 	ctx = context.WithValue(ctx, logger.LoggerKey, mainLogger)
 	mainLogger.Info("Starting application")
 
-	cfg := config.New("")
-	if cfg == nil {
-		mainLogger.Fatal("Failed to read config")
-	}
 	mainLogger.Debug("Config loaded", zap.Any("config", cfg))
 
 	db, err := postgres.New(&ctx, cfg.PostgresConfig)
@@ -49,13 +51,13 @@ func main() {
 
 	songsService := service.NewSongsService(songsRepo, externalAPIRepo)
 
-	server := rest.New(&ctx, cfg.ServerConfig, songsService)
+	server := rest.New(&ctx, cfg.ServerConfig, songsService, cfg.Debug)
 
 	graceChannel := make(chan os.Signal, 1)
 	signal.Notify(graceChannel, syscall.SIGINT, syscall.SIGTERM)
 
 	go func() {
-		if err := server.Run(); err != nil {
+		if err := server.Run(&ctx); err != nil {
 			mainLogger.Fatal("failed to start server", zap.Error(err))
 		}
 	}()

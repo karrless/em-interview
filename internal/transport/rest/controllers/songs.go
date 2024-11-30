@@ -30,14 +30,21 @@ func NewSongsController(ctx *context.Context, service SongsService) *SongsContro
 
 // SongRequest описывает структуру тела запроса
 type CreateSongRequest struct {
-	Group string `json:"group"` // Название группы
-	Song  string `json:"song"`  // Название песни
+	Group string `json:"group" example:"group_name"` // Название группы
+	Song  string `json:"song" example:"song_name"`   // Название песни
+}
+type UpdateSongRequest struct {
+	Group       string `json:"group" example:"group_name"`
+	Title       string `json:"song" example:"song_name"`
+	ReleaseDate string `json:"releaseDate" example:"21.12.2003"`
+	Text        string `json:"text" example:"text"`
+	Link        string `json:"link" example:"link"`
 }
 
 // @Summary Get song by id
 // Tags Songs
 // @Produce  json
-// @Param id path int true "Song ID"
+// @Param id path int true "Song ID" example(1)
 // @Success 200 {object} models.Song
 // @Failure 400 {object} error "Bad request"
 // @Failure 404 {object} error "Not found"
@@ -67,7 +74,7 @@ func (sc *SongsController) GetSong(c *gin.Context) {
 // @Summary Delete song by id
 // Tags Songs
 // @Produce  json
-// @Param id path int true "Song ID"
+// @Param id path int true "Song ID" example(1)
 // @Success 200 {object} nil
 // @Failure 400 {object} error "Bad request"
 // @Failure 500 {object} error "Internal server error"
@@ -92,8 +99,8 @@ func (sc *SongsController) DeleteSong(c *gin.Context) {
 // @Summary Update song by id
 // Tags Songs
 // @Produce  json
-// @Param id path int true "Song ID"
-// @Param song body models.Song true "Song"
+// @Param id path int true "Song ID" example(1)
+// @Param song body UpdateSongRequest true "Song" example(UpdateSongRequest)
 // @Success 200 {object} nil
 // @Failure 400 {object} error "Bad request"
 // @Failure 500 {object} error "Internal server error"
@@ -124,7 +131,7 @@ func (sc *SongsController) UpdateSong(c *gin.Context) {
 // @Summary Create song
 // Tags Songs
 // @Produce  json
-// @Param group body CreateSongRequest true "Song request"
+// @Param group body CreateSongRequest true "Song request" example(CreateSongRequest)
 // @Success 200 {object} models.Song "Created song"
 // @Failure 400 {object} error "Bad request"
 // @Failure 500 {object} error "Internal server error"
@@ -151,13 +158,13 @@ func (sc *SongsController) CreateSong(c *gin.Context) {
 // @Summary Get songs
 // Tags Songs
 // @Produce  json
-// @Param group query []string false "Song group" collectionFormat(multi)
-// @Param title query []string false "Song title" collectionFormat(multi)
-// @Param release_date query []string false "Song release date"
-// @Param before query string false "Song release date before"
-// @Param after query string false "Song release date after"
-// @Param offset query int false "Offset"
-// @Param limit query int false "Limit"
+// @Param group query []string false "Song group" collectionFormat(multi) example(group1, group2)
+// @Param title query []string false "Song title" collectionFormat(multi) example(song1, song2)
+// @Param release_date query []string false "Song release date" collectionFormat(multi) example(31.12.2006, 02.01.2006)
+// @Param before query string false "Song release date before" 	example(31.12.2006)
+// @Param after query string false "Song release date after" 	example(31.12.2006)
+// @Param offset query int false "Offset" example(10)
+// @Param limit query int false "Limit" example(10)
 // @Success 200 {object} []models.Song
 // @Failure 400 {object} error "Bad request"
 // @Failure 500 {object} error "Internal server error"
