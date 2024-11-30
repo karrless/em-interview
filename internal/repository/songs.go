@@ -19,15 +19,17 @@ func NewSongRepository(db *postgres.DB) *SongRepository {
 }
 
 // TODO переписать на squirrel
-func (r *SongRepository) CreateSong(song *models.Song) (int64, error) {
-	query := `INSERT INTO public.songs ("group", song, release_date, "text", link) VALUES ($1, $2, $3, $4, $5) RETURNING id;`
+func (r *SongRepository) CreateSong(song *models.Song) (*models.Song, error) {
+	query := `INSERT INTO public.songs ("group", song, release_date, "text", link) VALUES ($1, $2, $3, $4, $5) RETURNING *;`
 	songReleaseDate, err := time.Parse("02.01.2006", song.ReleaseDate)
 	if err != nil {
-		return 0, err
+		return nil, err
 	}
-	var result int64
-	err = r.DB.QueryRow(query, song.Group, song.Title, songReleaseDate, song.Text, song.Link).Scan(&result)
-	return result, err
+	var result models.Song
+	var createdSongReleaseDate time.Time
+	err = r.DB.QueryRow(query, song.Group, song.Title, songReleaseDate, song.Text, song.Link).Scan(&result.ID, &result.Group, &result.Title, &createdSongReleaseDate, &result.Text, &result.Link)
+	result.ReleaseDate = createdSongReleaseDate.Format("02.01.2006")
+	return &result, err
 }
 
 func (r *SongRepository) GetSong(id int64) (*models.Song, error) {
@@ -127,7 +129,6 @@ func (r *SongRepository) GetSongs(filter *models.SongsFilter) ([]*models.Song, e
 	}
 	if filter.Offset != nil {
 		query += fmt.Sprintf(`OFFSET $%d`, count)
-		count++
 		args = append(args, filter.Offset)
 	}
 

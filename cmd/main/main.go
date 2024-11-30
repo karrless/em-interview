@@ -2,10 +2,14 @@ package main
 
 import (
 	"context"
+	"os"
+	"os/signal"
+	"syscall"
 
 	"github.com/karrless/em-interview/internal/config"
 	"github.com/karrless/em-interview/internal/repository"
 	"github.com/karrless/em-interview/internal/service"
+	"github.com/karrless/em-interview/internal/transport/rest"
 	"github.com/karrless/em-interview/pkg/db/migrations"
 	"github.com/karrless/em-interview/pkg/db/postgres"
 	"github.com/karrless/em-interview/pkg/logger"
@@ -40,7 +44,24 @@ func main() {
 	}
 	mainLogger.Debug("Migrations applied", zap.Int("Migrate version", migrationsVersion))
 
-	externalAPIRepo := repository.NewExtarnalAPIRepository(&cfg.ExternalAPIConfig)
 	songsRepo := repository.NewSongRepository(db)
-	_ = service.NewSongsService(songsRepo, externalAPIRepo)
+	externalAPIRepo := repository.NewExtarnalAPIRepository(&cfg.ExternalAPIConfig)
+
+	songsService := service.NewSongsService(songsRepo, externalAPIRepo)
+
+	server := rest.New(&ctx, cfg.ServerConfig, songsService)
+
+	graceChannel := make(chan os.Signal, 1)
+	signal.Notify(graceChannel, syscall.SIGINT, syscall.SIGTERM)
+
+	go func() {
+		if err := server.Run(); err != nil {
+			mainLogger.Fatal("failed to start server", zap.Error(err))
+		}
+	}()
+
+	<-graceChannel
+	db.Close()
+	mainLogger.Debug("Database connection closed")
+	mainLogger.Info("Graceful shutdown!")
 }
