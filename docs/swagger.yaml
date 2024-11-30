@@ -1,0 +1,218 @@
+definitions:
+  controllers.CreateSongRequest:
+    properties:
+      group:
+        description: Название группы
+        example: group_name
+        type: string
+      song:
+        description: Название песни
+        example: song_name
+        type: string
+    type: object
+  controllers.UpdateSongRequest:
+    properties:
+      group:
+        example: group_name
+        type: string
+      link:
+        example: link
+        type: string
+      releaseDate:
+        example: 21.12.2003
+        type: string
+      song:
+        example: song_name
+        type: string
+      text:
+        example: text
+        type: string
+    type: object
+  models.Song:
+    properties:
+      group:
+        type: string
+      id:
+        type: integer
+      link:
+        type: string
+      releaseDate:
+        type: string
+      song:
+        type: string
+      text:
+        type: string
+    type: object
+info:
+  contact: {}
+paths:
+  /ping:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: pong
+          schema:
+            type: string
+      summary: Health check
+      tags:
+      - Healthcheck
+  /songs:
+    get:
+      parameters:
+      - collectionFormat: multi
+        description: Song group
+        example: group1, group2
+        in: query
+        items:
+          type: string
+        name: group
+        type: array
+      - collectionFormat: multi
+        description: Song title
+        example: song1, song2
+        in: query
+        items:
+          type: string
+        name: title
+        type: array
+      - collectionFormat: multi
+        description: Song release date
+        example: 31.12.2006, 02.01.2006
+        in: query
+        items:
+          type: string
+        name: release_date
+        type: array
+      - description: Song release date before
+        example: 31.12.2006
+        in: query
+        name: before
+        type: string
+      - description: Song release date after
+        example: 31.12.2006
+        in: query
+        name: after
+        type: string
+      - description: Offset
+        example: 10
+        in: query
+        name: offset
+        type: integer
+      - description: Limit
+        example: 10
+        in: query
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Song'
+            type: array
+        "400":
+          description: Bad request
+          schema: {}
+        "500":
+          description: Internal server error
+          schema: {}
+      summary: Get songs
+    post:
+      parameters:
+      - description: Song request
+        in: body
+        name: group
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.CreateSongRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Created song
+          schema:
+            $ref: '#/definitions/models.Song'
+        "400":
+          description: Bad request
+          schema: {}
+        "500":
+          description: Internal server error
+          schema: {}
+      summary: Create song
+  /songs/{id}:
+    delete:
+      parameters:
+      - description: Song ID
+        example: 1
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad request
+          schema: {}
+        "500":
+          description: Internal server error
+          schema: {}
+      summary: Delete song by id
+    get:
+      parameters:
+      - description: Song ID
+        example: 1
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Song'
+        "400":
+          description: Bad request
+          schema: {}
+        "404":
+          description: Not found
+          schema: {}
+        "500":
+          description: Internal server error
+          schema: {}
+      summary: Get song by id
+    put:
+      parameters:
+      - description: Song ID
+        example: 1
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Song
+        in: body
+        name: song
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.UpdateSongRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad request
+          schema: {}
+        "500":
+          description: Internal server error
+          schema: {}
+      summary: Update song by id
+swagger: "2.0"
