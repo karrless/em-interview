@@ -1,4 +1,13 @@
 definitions:
+  controllers.CreateSongRequest:
+    properties:
+      group:
+        description: Название группы
+        type: string
+      song:
+        description: Название песни
+        type: string
+    type: object
   models.Song:
     properties:
       group:
@@ -32,18 +41,27 @@ paths:
   /songs:
     get:
       parameters:
-      - description: Song group
+      - collectionFormat: multi
+        description: Song group
         in: query
+        items:
+          type: string
         name: group
-        type: string
-      - description: Song title
+        type: array
+      - collectionFormat: multi
+        description: Song title
         in: query
+        items:
+          type: string
         name: title
-        type: string
-      - description: Song release date
+        type: array
+      - collectionFormat: csv
+        description: Song release date
         in: query
+        items:
+          type: string
         name: release_date
-        type: string
+        type: array
       - description: Song release date before
         in: query
         name: before
@@ -78,18 +96,12 @@ paths:
       summary: Get songs
     post:
       parameters:
-      - description: Song title
-        in: body
-        name: title
-        required: true
-        schema:
-          type: string
-      - description: Song title
+      - description: Song request
         in: body
         name: group
         required: true
         schema:
-          type: string
+          $ref: '#/definitions/controllers.CreateSongRequest'
       produces:
       - application/json
       responses:

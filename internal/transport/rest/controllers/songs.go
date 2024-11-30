@@ -28,6 +28,12 @@ func NewSongsController(ctx *context.Context, service SongsService) *SongsContro
 	return &SongsController{service: service, ctx: ctx}
 }
 
+// SongRequest описывает структуру тела запроса
+type CreateSongRequest struct {
+	Group string `json:"group"` // Название группы
+	Song  string `json:"song"`  // Название песни
+}
+
 // @Summary Get song by id
 // Tags Songs
 // @Produce  json
@@ -102,7 +108,7 @@ func (sc *SongsController) UpdateSong(c *gin.Context) {
 	}
 	var song models.Song
 	if err := c.ShouldBindJSON(&song); err != nil {
-		c.JSON(400, err)
+		c.JSON(400, fmt.Errorf("Update song: %w", err))
 		return
 	}
 	song.ID = id64
@@ -118,8 +124,7 @@ func (sc *SongsController) UpdateSong(c *gin.Context) {
 // @Summary Create song
 // Tags Songs
 // @Produce  json
-// @Param title body string true "Song title"
-// @Param group body string true "Song title"
+// @Param group body CreateSongRequest true "Song request"
 // @Success 200 {object} models.Song "Created song"
 // @Failure 400 {object} error "Bad request"
 // @Failure 500 {object} error "Internal server error"
@@ -127,10 +132,13 @@ func (sc *SongsController) UpdateSong(c *gin.Context) {
 func (sc *SongsController) CreateSong(c *gin.Context) {
 	debugLogger := logger.GetLoggerFromCtx(*sc.ctx)
 	var song models.Song
-	if err := c.ShouldBindJSON(&song); err != nil {
-		c.JSON(400, err)
+	var createSongRequest CreateSongRequest
+	if err := c.ShouldBindJSON(&createSongRequest); err != nil {
+		c.JSON(400, fmt.Errorf("Create song: %w", err))
 		return
 	}
+	song.Group = createSongRequest.Group
+	song.Title = createSongRequest.Song
 	createdSong, err := sc.service.CreateSong(&song)
 	if err != nil {
 		debugLogger.Debug("CreateSong", zap.Error(err))
@@ -143,9 +151,9 @@ func (sc *SongsController) CreateSong(c *gin.Context) {
 // @Summary Get songs
 // Tags Songs
 // @Produce  json
-// @Param group query string false "Song group"
-// @Param title query string false "Song title"
-// @Param release_date query string false "Song release date"
+// @Param group query []string false "Song group" collectionFormat(multi)
+// @Param title query []string false "Song title" collectionFormat(multi)
+// @Param release_date query []string false "Song release date"
 // @Param before query string false "Song release date before"
 // @Param after query string false "Song release date after"
 // @Param offset query int false "Offset"
@@ -158,7 +166,7 @@ func (sc *SongsController) GetSongs(c *gin.Context) {
 	debugLogger := logger.GetLoggerFromCtx(*sc.ctx)
 	var filter models.SongsFilter
 	if err := c.ShouldBindQuery(&filter); err != nil {
-		c.JSON(400, err)
+		c.JSON(400, fmt.Errorf("Get songs: %w", err))
 		return
 	}
 	songs, err := sc.service.GetSongs(&filter)

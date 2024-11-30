@@ -42,19 +42,31 @@ const docTemplate = `{
                 "summary": "Get songs",
                 "parameters": [
                     {
-                        "type": "string",
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "collectionFormat": "multi",
                         "description": "Song group",
                         "name": "group",
                         "in": "query"
                     },
                     {
-                        "type": "string",
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "collectionFormat": "multi",
                         "description": "Song title",
                         "name": "title",
                         "in": "query"
                     },
                     {
-                        "type": "string",
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "collectionFormat": "csv",
                         "description": "Song release date",
                         "name": "release_date",
                         "in": "query"
@@ -111,21 +123,12 @@ const docTemplate = `{
                 "summary": "Create song",
                 "parameters": [
                     {
-                        "description": "Song title",
-                        "name": "title",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "description": "Song title",
+                        "description": "Song request",
                         "name": "group",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/controllers.CreateSongRequest"
                         }
                     }
                 ],
@@ -251,6 +254,19 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "controllers.CreateSongRequest": {
+            "type": "object",
+            "properties": {
+                "group": {
+                    "description": "Название группы",
+                    "type": "string"
+                },
+                "song": {
+                    "description": "Название песни",
+                    "type": "string"
+                }
+            }
+        },
         "models.Song": {
             "type": "object",
             "properties": {

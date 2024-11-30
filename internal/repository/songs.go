@@ -129,7 +129,6 @@ func (r *SongRepository) GetSongs(filter *models.SongsFilter) ([]*models.Song, e
 	}
 	if filter.Offset != nil {
 		query += fmt.Sprintf(`OFFSET $%d`, count)
-		count++
 		args = append(args, filter.Offset)
 	}
 
